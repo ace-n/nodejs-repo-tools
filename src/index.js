@@ -21,6 +21,7 @@ const path = require('path');
 const proxyquire = require('proxyquire').noPreserveCache();
 const sinon = require(`sinon`);
 const supertest = require('supertest');
+const fs = require('fs');
 
 const install = require('./api/testRunner/install');
 const onChange = require('./webhook').onChange;
