@@ -121,8 +121,7 @@ module.exports = (config = {}) => {
     }
 
     function attemptDeploy (triesLeft) {
-      console.log(`${triesLeft.red} tries remaining...`);
-      log(config, 'DEPLOYING... ');
+      log(config, `DEPLOYING... (${triesLeft.red} tries remaining)`);
 
       const logFile = path.join(config.cwd, `${config.test}-${Date.now()}.log`);
       const logStream = fs.createWriteStream(logFile, { flags: 'a' });
