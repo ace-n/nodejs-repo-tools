@@ -228,20 +228,20 @@ module.exports = (config = {}) => {
         }
         finish(err);
       }
-      .then(() => {
-        if (config.delete && !config.dryRun) {
-          return deleteVersion(config).catch(() => {});
-        }
-      }, (err) => {
-        if (config.delete && !config.dryRun) {
-          return deleteVersion(config)
-            .catch(() => {})
-            .then(() => Promise.reject(err));
-        }
-        return Promise.reject(err);
-      });
     }
 
-    attemptDeploy(config.tries);
+    attemptDeploy(config.tries)
+  })
+  .then(() => {
+    if (config.delete && !config.dryRun) {
+      return deleteVersion(config).catch(() => {});
+    }
+  }, (err) => {
+    if (config.delete && !config.dryRun) {
+      return deleteVersion(config)
+        .catch(() => {})
+        .then(() => Promise.reject(err));
+    }
+    return Promise.reject(err);
   });
 };
