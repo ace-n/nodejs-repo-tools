@@ -112,21 +112,13 @@ module.exports = (config = {}) => {
       }
     }
 
-    function finishLogs () {
-      numEnded++;
-      if (numEnded === 2) {
-        logStream.end();
-        log(config, `Saved logfile to ${logFile}`);
-      }
-    }
-
+    let numEnded = 0;
     function attemptDeploy (triesLeft) {
       log(config, `DEPLOYING... (${triesLeft} tries remaining)`);
 
       const logFile = path.join(config.cwd, `${config.test}-${Date.now()}.log`);
       const logStream = fs.createWriteStream(logFile, { flags: 'a' });
 
-      let numEnded = 0;
       function finishLogs () {
         numEnded++;
         if (numEnded === 2) {
@@ -230,7 +222,7 @@ module.exports = (config = {}) => {
       }
     }
 
-    attemptDeploy(config.tries)
+    attemptDeploy(config.tries);
   })
   .then(() => {
     if (config.delete && !config.dryRun) {
@@ -244,5 +236,7 @@ module.exports = (config = {}) => {
     }
     return Promise.reject(err);
   })
-  .catch((err) => console.error('Error in utils.testDeploy:', error));
+  .catch((err) => {
+    console.error('Error in utils.testDeploy:', err);
+  });
 };
