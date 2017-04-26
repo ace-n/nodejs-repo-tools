@@ -40,6 +40,7 @@ exports.testLocalApp = app;
 exports.deploy = deploy;
 exports.testDeploy = deploy;
 exports.onChange = onChange;
+exports.deleteVersion = utils.deleteVersion;
 
 exports.run = (cmd, cwd) => {
   return childProcess.execSync(cmd, { cwd: cwd }).toString().trim();
