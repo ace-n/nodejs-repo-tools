@@ -121,7 +121,7 @@ module.exports = (config = {}) => {
     }
 
     function attemptDeploy (triesLeft) {
-      log(config, `DEPLOYING... (${triesLeft.red} tries remaining)`);
+      log(config, `DEPLOYING... (${triesLeft} tries remaining)`);
 
       const logFile = path.join(config.cwd, `${config.test}-${Date.now()}.log`);
       const logStream = fs.createWriteStream(logFile, { flags: 'a' });
@@ -136,7 +136,7 @@ module.exports = (config = {}) => {
       }
 
       // Don't use "npm run deploy" because we need extra flags
-      const proc = childProcess.spawn('gcloud', args, {
+      const proc = spawn('gcloud', args, {
         cwd: config.cwd,
         shell: true
       });
@@ -243,5 +243,6 @@ module.exports = (config = {}) => {
         .then(() => Promise.reject(err));
     }
     return Promise.reject(err);
-  });
+  })
+  .catch((err) => console.error('Error in utils.testDeploy:', error));
 };
