@@ -93,7 +93,8 @@ exports.testRequest = (url, config, numTry) => {
       } else if (config.testStr && !config.testStr.test(body)) {
         throw new Error(`${config.test}: failed verification!\nExpected body: ${config.testStr}\nActual: ${body}`);
       }
-    }, (err) => {
+    })
+    .catch((err) => {
       if (err && err.response) {
         const EXPECTED_STATUS_CODE = config.code || 200;
 
@@ -106,13 +107,10 @@ exports.testRequest = (url, config, numTry) => {
           throw new Error(`${config.test}: failed verification!\nExpected body: ${config.msg}\nActual: ${body}`);
         } else if (config.testStr && !config.testStr.test(body)) {
           throw new Error(`${config.test}: failed verification!\nExpected body: ${config.testStr}\nActual: ${body}`);
+        } else {
+          Promise.resolve() // Error was intended
         }
-      } else {
-        return Promise.reject(err);
-      }
-    })
-    .catch((err) => {
-      if (numTry >= MAX_TRIES) {
+      } else if (numTry >= MAX_TRIES) {
         return Promise.reject(err);
       }
 

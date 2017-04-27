@@ -179,7 +179,7 @@ module.exports = (config = {}) => {
                 finish();
               })
               .catch((err) => {
-                console.error(`Error:`, err);
+                console.error(`Error in attemptDeploy:`, err);
                 if (triesLeft > 0) {
                   attemptDeploy(triesLeft - 1);
                 }
