@@ -66,12 +66,6 @@ module.exports = (config = {}) => {
 
     // Exit helper so we don't call "done" more than once
     function finish (err) {
-      try {
-        fs.unlinkSync(tmpAppYaml);
-      } catch (err) {
-        // Ignore error
-      }
-
       if (!calledDone) {
         calledDone = true;
         if (err) {
@@ -170,27 +164,26 @@ module.exports = (config = {}) => {
             // Deployment succeeded
             log(config, 'App deployed...');
 
-            // Give apps time to start
-            setTimeout(() => {
-              // Test versioned url of "default" module
-              let demoUrl = getUrl(config);
+            // Test versioned url of "default" module
+            let demoUrl = getUrl(config);
 
-              if (config.demoUrl) {
-                demoUrl = config.demoUrl;
-              }
+            if (config.demoUrl) {
+              demoUrl = config.demoUrl;
+            }
 
-              // Test that app is running successfully
-              log(config, `Testing ${demoUrl}`);
-              testRequest(demoUrl, config, (err) => {
-                if (err && triesLeft > 0) {
-                  console.error(err);
+            // Test that app is running successfully
+            log(config, `Testing ${demoUrl}`);
+            testRequest(demoUrl, config, 10)
+              .then(() => {
+                log(config, 'Success!');
+                finish();
+              })
+              .catch((err) => {
+                console.error(`Error:`, err);
+                if (triesLeft > 0) {
                   attemptDeploy(triesLeft - 1);
-                } else {
-                  log(config, 'Success!');
-                  finish(err);
                 }
               });
-            }, 5000);
           }
         });
       } catch (err) {
