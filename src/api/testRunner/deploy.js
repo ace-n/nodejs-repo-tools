@@ -27,6 +27,25 @@ const {
   testRequest
 } = require('../utils');
 
+function changeScaling (config, yamlName) {    
+  const oldYamlPath = path.join(config.cwd, yamlName);   
+  const newYamlPath = path.join(config.cwd, `${config.test}-${config.now}.yaml`);    
+   
+  log(config, 'Compiling:', newYamlPath.yellow);   
+  let yaml = fs.readFileSync(oldYamlPath, 'utf8');   
+  yaml += `\n\nmanual_scaling:\n  instances: 1\n`;   
+   
+  if (config.dryRun) {   
+    log(config, 'Printing:', newYamlPath.yellow, `\n${yaml}`);   
+  } else {   
+    log(config, 'Writing:', newYamlPath.yellow);   
+    fs.writeFileSync(newYamlPath, yaml, 'utf8');   
+  }    
+   
+  return newYamlPath;    
+}    
+
+
 module.exports = (config = {}) => {
   return new Promise((resolve, reject) => {
     config.now = Date.now();
@@ -45,10 +64,13 @@ module.exports = (config = {}) => {
     // Keep track off whether the logs have fully flushed
     let logFinished = false;
 
+    // Manually set # of instances to 1   
+    const tmpAppYaml = changeScaling(config, config.yaml || 'app.yaml');
+
     const args = [
       'app',
       'deploy',
-      config.yaml,
+      path.parse(tmpAppYaml).base,
       // Skip prompt
       '-q',
       `--project=${config.projectId}`,
