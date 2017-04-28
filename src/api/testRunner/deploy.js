@@ -32,6 +32,7 @@ module.exports = (config = {}) => {
     config.now = Date.now();
     config.cwd = config.cwd || process.cwd();
     config.tries = config.tries || 3;
+    config.yaml = config.yaml || 'app.yaml';
     const cmd = config.deployCmd || 'gcloud';
 
     if (config.dryRun) {
@@ -47,7 +48,7 @@ module.exports = (config = {}) => {
     const args = [
       'app',
       'deploy',
-      'app.yaml',
+      config.yaml,
       // Skip prompt
       '-q',
       `--project=${config.projectId}`,
